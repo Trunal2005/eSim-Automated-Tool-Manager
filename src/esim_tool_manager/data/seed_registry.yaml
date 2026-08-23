@@ -1,0 +1,314 @@
+# eSim Tool Manager — Seed Registry
+# =================================
+# This file contains the initial tool registry data loaded into the SQLite
+# database on first run. Each entry describes a tool in the eSim EDA toolchain
+# with real version data verified as of August 2026.
+#
+# To add a new tool: add a new entry following the same structure below,
+# then run `esim-tool-manager doctor` to validate the registry.
+#
+# Version data sources:
+#   Ngspice:      https://ngspice.sourceforge.io/ (v47, Aug 2026)
+#   KiCad:        https://www.kicad.org/download/ (v10.0.5, Jul 2026)
+#   GHDL:         https://github.com/ghdl/ghdl/releases (v6.0, Mar 2026)
+#   Verilator:    https://verilator.org/guide/latest/ (v5.050, Jul 2026)
+#   OpenModelica:  https://openmodelica.org/ (v1.27.0, Summer 2026)
+#   Git:          https://git-scm.com/ (v2.55.0, Aug 2026)
+#   Python3:      https://www.python.org/ (v3.14.7, Aug 2026)
+
+tools:
+  - id: ngspice
+    display_name: Ngspice
+    description: "Mixed-level/mixed-signal electronic circuit simulator (SPICE). Core simulation engine for eSim."
+    category: simulation
+    homepage: "https://ngspice.sourceforge.io/"
+    version_command: ["ngspice", "--version"]
+    version_regex: '(?i)ngspice[- ]*(\d+(?:\.\d+)*)'
+    min_version: "40"
+    known_good_version: "47"
+    dependencies: []
+    env_vars:
+      NGSPICE_HOME: "Root directory of the Ngspice installation"
+    expected_paths:
+      linux: "/usr/bin/ngspice"
+      windows: "C:\\Program Files\\ngspice\\bin\\ngspice.exe"
+      macos: "/usr/local/bin/ngspice"
+    install_strategies:
+      linux:
+        os_family: linux
+        method: package_manager
+        package_name: ngspice
+      windows:
+        os_family: windows
+        method: direct_download
+        download_url: "https://sourceforge.net/projects/ngspice/files/ng-spice-rework/47/ngspice-47_64.7z/download"
+        manual_url: "https://ngspice.sourceforge.io/download.html"
+      macos:
+        os_family: macos
+        method: package_manager
+        package_name: ngspice
+
+  - id: kicad
+    display_name: KiCad
+    description: "Open-source schematic capture and PCB layout tool. Used by eSim for circuit design."
+    category: schematic
+    homepage: "https://www.kicad.org/"
+    version_command: ["kicad-cli", "version"]
+    version_regex: '(\d+\.\d+\.\d+)'
+    min_version: "8.0.0"
+    known_good_version: "10.0.5"
+    dependencies: []
+    env_vars: {}
+    expected_paths:
+      linux: "/usr/bin/kicad"
+      windows: "C:\\Program Files\\KiCad\\bin\\kicad.exe"
+      macos: "/Applications/KiCad/KiCad.app"
+    install_strategies:
+      linux:
+        os_family: linux
+        method: package_manager
+        package_name: kicad
+      windows:
+        os_family: windows
+        method: direct_download
+        download_url: "https://downloads.kicad.org/kicad/windows/explore/stable"
+        manual_url: "https://www.kicad.org/download/windows/"
+      macos:
+        os_family: macos
+        method: package_manager
+        package_name: kicad
+
+  - id: ghdl
+    display_name: GHDL
+    description: "Open-source VHDL simulator. Required by eSim's NGHDL module for digital simulation."
+    category: digital
+    homepage: "https://ghdl.github.io/ghdl/"
+    version_command: ["ghdl", "--version"]
+    version_regex: 'GHDL (\d+\.\d+(?:\.\d+)?)'
+    min_version: "4.0.0"
+    known_good_version: "6.0"
+    dependencies: []
+    env_vars:
+      GHDL_PREFIX: "GHDL library prefix directory"
+    expected_paths:
+      linux: "/usr/bin/ghdl"
+      windows: "C:\\GHDL\\bin\\ghdl.exe"
+      macos: "/usr/local/bin/ghdl"
+    install_strategies:
+      linux:
+        os_family: linux
+        method: direct_download
+        download_url: "https://github.com/ghdl/ghdl/releases/download/v6.0/ghdl-gha-ubuntu-22.04-llvm.tgz"
+        manual_url: "https://ghdl.github.io/ghdl/getting.html"
+      windows:
+        os_family: windows
+        method: direct_download
+        download_url: "https://github.com/ghdl/ghdl/releases/download/v6.0/ghdl-UCRT64.zip"
+        manual_url: "https://ghdl.github.io/ghdl/getting.html"
+      macos:
+        os_family: macos
+        method: package_manager
+        package_name: ghdl
+
+  - id: verilator
+    display_name: Verilator
+    description: "High-performance Verilog/SystemVerilog simulator. Required by eSim's NgVeri module."
+    category: digital
+    homepage: "https://verilator.org/"
+    version_command: ["verilator", "--version"]
+    version_regex: 'Verilator (\d+\.\d+)'
+    min_version: "5.0"
+    known_good_version: "5.050"
+    dependencies: []
+    env_vars:
+      VERILATOR_ROOT: "Root directory of the Verilator installation"
+    expected_paths:
+      linux: "/usr/bin/verilator"
+      windows: ""  # Verilator on Windows requires WSL or MSYS2
+      macos: "/usr/local/bin/verilator"
+    install_strategies:
+      linux:
+        os_family: linux
+        method: package_manager
+        package_name: verilator
+      windows:
+        os_family: windows
+        method: manual
+        manual_url: "https://verilator.org/guide/latest/install.html"
+      macos:
+        os_family: macos
+        method: package_manager
+        package_name: verilator
+
+  - id: openmodelica
+    display_name: OpenModelica
+    description: "Open-source Modelica-based modelling and simulation environment for system-level design."
+    category: simulation
+    homepage: "https://openmodelica.org/"
+    version_command: ["omc", "--version"]
+    version_regex: 'v(\d+\.\d+\.\d+)'
+    min_version: "1.20.0"
+    known_good_version: "1.27.0"
+    dependencies: []
+    env_vars:
+      OPENMODELICAHOME: "Root directory of the OpenModelica installation"
+    expected_paths:
+      linux: "/usr/bin/omc"
+      windows: "C:\\OpenModelica\\bin\\omc.exe"
+      macos: "/usr/local/bin/omc"
+    install_strategies:
+      linux:
+        os_family: linux
+        method: package_manager
+        package_name: openmodelica
+        # Note: On Ubuntu, requires adding the OpenModelica PPA first:
+        # sudo add-apt-repository "deb https://build.openmodelica.org/apt focal stable"
+      windows:
+        os_family: windows
+        method: direct_download
+        download_url: "https://build.openmodelica.org/windows/releases/1.27/"
+        manual_url: "https://openmodelica.org/download/download-windows/"
+      macos:
+        os_family: macos
+        method: manual
+        manual_url: "https://openmodelica.org/download/download-mac/"
+
+  - id: git
+    display_name: Git
+    description: "Distributed version control system. Required for eSim source code management."
+    category: vcs
+    homepage: "https://git-scm.com/"
+    version_command: ["git", "--version"]
+    version_regex: 'git version (\d+\.\d+\.\d+)'
+    min_version: "2.30.0"
+    known_good_version: "2.55.0"
+    dependencies: []
+    env_vars: {}
+    expected_paths:
+      linux: "/usr/bin/git"
+      windows: "C:\\Program Files\\Git\\cmd\\git.exe"
+      macos: "/usr/bin/git"
+    install_strategies:
+      linux:
+        os_family: linux
+        method: package_manager
+        package_name: git
+      windows:
+        os_family: windows
+        method: package_manager
+        package_name: git
+      macos:
+        os_family: macos
+        method: package_manager
+        package_name: git
+
+  - id: python3
+    display_name: Python 3
+    description: "Python programming language runtime. eSim and this tool manager are built with Python."
+    category: runtime
+    homepage: "https://www.python.org/"
+    version_command: ["python3", "--version"]
+    version_regex: 'Python (\d+\.\d+\.\d+)'
+    min_version: "3.10.0"
+    known_good_version: "3.14.7"
+    dependencies: []
+    env_vars:
+      PYTHONPATH: "Additional Python module search paths"
+    expected_paths:
+      linux: "/usr/bin/python3"
+      windows: "C:\\Python3\\python.exe"
+      macos: "/usr/local/bin/python3"
+    install_strategies:
+      linux:
+        os_family: linux
+        method: package_manager
+        package_name: python3
+      windows:
+        os_family: windows
+        method: direct_download
+        download_url: "https://www.python.org/downloads/"
+        manual_url: "https://www.python.org/downloads/windows/"
+      macos:
+        os_family: macos
+        method: package_manager
+        package_name: python3
+
+# ── eSim meta-tools (depend on the above) ──────────────────────────
+
+  - id: nghdl
+    display_name: NGHDL
+    description: "eSim's VHDL integration module — bridges GHDL with Ngspice for mixed-signal digital simulation."
+    category: digital
+    homepage: "https://esim.fossee.in/"
+    version_command: ["nghdl", "--version"]
+    version_regex: '(\d+\.\d+(?:\.\d+)?)'
+    min_version: "0.1.0"
+    known_good_version: "2.5"
+    dependencies:
+      - ghdl
+      - ngspice
+    env_vars: {}
+    expected_paths:
+      linux: "/usr/local/bin/nghdl"
+    install_strategies:
+      linux:
+        os_family: linux
+        method: manual
+        manual_url: "https://esim.fossee.in/downloads"
+
+  - id: ngveri
+    display_name: NgVeri
+    description: "eSim's Verilog integration module — bridges Verilator with Ngspice for Verilog-based simulation."
+    category: digital
+    homepage: "https://esim.fossee.in/"
+    version_command: ["ngveri", "--version"]
+    version_regex: '(\d+\.\d+(?:\.\d+)?)'
+    min_version: "0.1.0"
+    known_good_version: "2.5"
+    dependencies:
+      - verilator
+      - ngspice
+    env_vars: {}
+    expected_paths:
+      linux: "/usr/local/bin/ngveri"
+    install_strategies:
+      linux:
+        os_family: linux
+        method: manual
+        manual_url: "https://esim.fossee.in/downloads"
+
+# ── Configuration Profiles ──────────────────────────────────────────
+
+profiles:
+  - name: minimal-analog
+    display_name: "Minimal Analog"
+    description: "Minimal setup for analog SPICE simulation only (Ngspice + KiCad)."
+    tool_ids:
+      - ngspice
+      - kicad
+      - git
+      - python3
+
+  - name: digital-only
+    display_name: "Digital Only"
+    description: "Setup for digital simulation with VHDL and Verilog support."
+    tool_ids:
+      - ngspice
+      - ghdl
+      - verilator
+      - git
+      - python3
+
+  - name: full-mixed-signal
+    display_name: "Full Mixed-Signal"
+    description: "Complete eSim setup with all tools for mixed-signal, analog, and digital simulation."
+    tool_ids:
+      - ngspice
+      - kicad
+      - ghdl
+      - verilator
+      - openmodelica
+      - git
+      - python3
+      - nghdl
+      - ngveri
